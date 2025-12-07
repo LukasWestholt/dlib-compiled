@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-      include:
+        include:
           - python-version: "3.7"
             python-tag: "cp37-*"
           - python-version: "3.8"
