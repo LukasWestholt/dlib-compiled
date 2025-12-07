@@ -1,0 +1,113 @@
+name: Build dlib Wheels
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build Wheels (${{ matrix.platform }} / py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.13", "3.14", "3.15"]
+        include:
+          # macOS Intel
+          - platform: macosx_10_13_x86_64
+            os: macos-latest
+          - platform: macosx_10_9_x86_64
+            os: macos-latest
+
+          # macOS ARM
+          - platform: macosx_11_0_arm64
+            os: macos-latest
+
+          # Linux manylinux 2.24
+          - platform: manylinux_2_24_aarch64
+            os: ubuntu-latest
+          - platform: manylinux_2_24_x86_64
+            os: ubuntu-latest
+
+          # Linux manylinux 2.28
+          - platform: manylinux_2_28_aarch64
+            os: ubuntu-latest
+          - platform: manylinux_2_28_x86_64
+            os: ubuntu-latest
+
+          # Linux musllinux 1.2
+          - platform: musllinux_1_2_aarch64
+            os: ubuntu-latest
+          - platform: musllinux_1_2_x86_64
+            os: ubuntu-latest
+
+          # Windows
+          - platform: win_amd64
+            os: windows-latest
+          - platform: win_arm64
+            os: windows-latest
+
+    steps:
+      - name: Checkout this repo (for release)
+        uses: actions/checkout@v4
+
+      - name: Checkout dlib
+        uses: actions/checkout@v4
+        with:
+          repository: davisking/dlib
+          path: dlib
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install build system
+        run: |
+          pip install --upgrade pip
+          pip install build cibuildwheel
+
+      - name: Build wheel using cibuildwheel
+        env:
+          CIBW_PLATFORM: auto
+          CIBW_BUILD: "cp${{ matrix.python-version//./ }}-*"
+          CIBW_ARCHS: "all"
+          CIBW_SKIP: "cp36-*"
+
+          # Override platform naming if needed
+          CIBW_BUILD_VERBOSITY: 1
+
+        run: |
+          cd dlib
+          cibuildwheel --output-dir wheelhouse
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels
+          path: dlib/wheelhouse/*.whl
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels
+          path: wheels
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "dlib Wheels ${{ github.ref_name }}"
+          body: "Automated build of dlib wheels for multiple architectures and Python versions."
+          files: wheels/*.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
