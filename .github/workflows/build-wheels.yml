@@ -94,7 +94,7 @@ jobs:
 
   release:
     name: Create Release
-    needs: build
+    needs: build_wheels
     runs-on: ubuntu-latest
 
     steps:
