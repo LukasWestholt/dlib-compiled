@@ -46,6 +46,7 @@ jobs:
           arch: arm64
 
       - name: Check Python libs
+        if: matrix.buildplat[1] == 'win_arm64'
         run: |
           dir %PYTHONHOME%\libs
           dir %PYTHONHOME%
