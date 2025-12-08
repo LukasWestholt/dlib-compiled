@@ -30,7 +30,7 @@ jobs:
         - [macos-15, macosx_arm64]
         - [windows-2025, win_amd64]
         - [windows-11-arm, win_arm64]
-        python: [["cp37", "3.7"], ["cp38", "3.8"], ["cp39", "3.9"], ["cp310", "3.10"], ["cp311", "3.11"], ["cp312", "3.12"], ["cp313", "3.13"], ["cp314", "3.14"]]
+        python: [["cp38", "3.8"], ["cp39", "3.9"], ["cp310", "3.10"], ["cp311", "3.11"], ["cp312", "3.12"], ["cp313", "3.13"], ["cp314", "3.14"]]
 
     steps:
       - name: Checkout dlib
@@ -45,6 +45,11 @@ jobs:
         with:
           arch: arm64
 
+      - name: Check Python libs
+        run: |
+          dir %PYTHONHOME%\libs
+          dir %PYTHONHOME%
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -58,6 +63,7 @@ jobs:
           CIBW_BUILD_FRONTEND: ${{ matrix.cibw_build_frontend || 'pip' }}
           CIBW_PLATFORM: ${{ (matrix.buildplat[1] == 'pyodide_wasm32' && 'pyodide') || (matrix.buildplat[1] == 'win_arm64' && 'windows') || 'auto' }}
           CIBW_ARCHS: ${{ matrix.buildplat[1] == 'win_arm64' && 'ARM64' || 'auto' }}
+          MACOSX_DEPLOYMENT_TARGET: 14.0
           # CIBW_BEFORE_BUILD_WINDOWS: 'python -m pip install delvewheel'
 
       - name: Set up Python for validation/upload (non-ARM64 Windows & other OS)
