@@ -10,8 +10,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
 
 jobs:
   build_wheels:
@@ -110,6 +108,9 @@ jobs:
     name: Create Release
     needs: build_wheels
     runs-on: ubuntu-latest
+    permissions:
+      # https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#create-a-release
+      contents: write
 
     steps:
       - name: Download all artifacts
