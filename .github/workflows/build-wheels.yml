@@ -103,7 +103,8 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.python[0] }}-${{ matrix.buildplat[1] }}
-          path: ./wheelhouse/*.whl
+          path: wheelhouse/*.whl
+          if-no-files-found: 'error'
 
   release:
     name: Create Release
@@ -114,8 +115,8 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v6
         with:
-          name: wheelhouse
           path: wheelhouse
+          merge-multiple: 'true'
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -123,6 +124,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "dlib Wheels ${{ github.ref_name }}"
           body: "Automated build of dlib wheels for multiple architectures and Python versions."
-          files: wheelhouse/*.whl
+          files: wheelhouse/**/*.whl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
