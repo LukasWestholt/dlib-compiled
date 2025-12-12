@@ -114,8 +114,8 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v6
         with:
-          name: wheels
-          path: wheels
+          name: wheelhouse
+          path: wheelhouse
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -123,6 +123,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: "dlib Wheels ${{ github.ref_name }}"
           body: "Automated build of dlib wheels for multiple architectures and Python versions."
-          files: wheels/*.whl
+          files: wheelhouse/*.whl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
