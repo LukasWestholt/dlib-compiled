@@ -38,6 +38,10 @@ jobs:
             python: [ "cp38", "3.8" ]
           # Python on win arm64 is still experimental and not working for me
           - buildplat: [ windows-11-arm, win_arm64 ]
+          # Error: 'fp.h' file not found
+          - buildplat: [ macos-15, macosx_arm64 ]
+            python: [ "cp38", "3.8" ]
+
     steps:
       - name: Checkout dlib
         uses: actions/checkout@v6
