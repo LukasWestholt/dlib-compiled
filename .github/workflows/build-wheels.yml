@@ -121,9 +121,5 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: "dlib Wheels ${{ github.ref_name }}"
           body: "Automated build of dlib wheels for multiple architectures and Python versions."
           files: wheelhouse/**/*.whl
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
