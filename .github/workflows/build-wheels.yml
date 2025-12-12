@@ -31,7 +31,11 @@ jobs:
         - [windows-2025, win_amd64]
         - [windows-11-arm, win_arm64]
         python: [["cp38", "3.8"], ["cp39", "3.9"], ["cp310", "3.10"], ["cp311", "3.11"], ["cp312", "3.12"], ["cp313", "3.13"], ["cp314", "3.14"]]
-
+        exclude:
+          # Don't exist on cibuildwheels.
+          # See: https://cibuildwheel.pypa.io/en/stable/options/#build-skip
+          - buildplat: [ windows-11-arm, win_arm64 ]
+            python: [ "cp38", "3.8" ]
     steps:
       - name: Checkout dlib
         uses: actions/checkout@v6
