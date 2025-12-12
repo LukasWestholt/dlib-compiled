@@ -44,11 +44,11 @@ jobs:
           fetch-depth: 0
       
       # TODO is this even needed?
-      - name: Set up MSVC environment for ARM64
-        if: matrix.buildplat[1] == 'win_arm64'
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: arm64
+      # - name: Set up MSVC environment for ARM64
+      #  if: matrix.buildplat[1] == 'win_arm64'
+      #  uses: ilammy/msvc-dev-cmd@v1
+      #  with:
+      #    arch: arm64
 
       - name: Build wheel using cibuildwheel
         uses: pypa/cibuildwheel@v3.2.1
